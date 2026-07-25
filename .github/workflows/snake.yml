@@ -1,0 +1,27 @@
+name: Generate Snake
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: Platane/snk@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            output/github-contribution-grid-snake.svg?color_snake=#00D4AA
+            output/github-contribution-grid-snake-dark.svg?palette=github-dark&color_snake=#00D4AA
+
+      - name: Commit and push snake
+        run: |
+          git config user.name snake-bot
+          git config user.email snake-bot@users.noreply.github.com
+          git add output/
+          git diff --staged --quiet || git commit -m "chore: update snake contribution grid"
+          git push
